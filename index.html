@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hacked Game</title>
+
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+        background: black;
+        overflow: hidden;
+        font-family: monospace;
+        color: #00ff00;
+        cursor: not-allowed;
+      }
+
+      canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 0;
+      }
+
+      h1 {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 20px;
+        font-size: 28px;
+        z-index: 2;
+        animation: glitch 1s infinite;
+      }
+
+      @keyframes glitch {
+        0% {
+          text-shadow: 2px 0 red;
+        }
+        25% {
+          text-shadow: -2px 0 blue;
+        }
+        50% {
+          text-shadow: 2px 2px lime;
+        }
+        75% {
+          text-shadow: -2px -2px red;
+        }
+        100% {
+          text-shadow: 2px 0 blue;
+        }
+      }
+
+      #btn {
+        position: absolute;
+        padding: 12px 25px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        background: #ff0000;
+        color: black;
+        cursor: pointer;
+        z-index: 3;
+        box-shadow: 0 0 20px #ff0000;
+      }
+
+      #terminal {
+        position: absolute;
+        top: 80px; /* 🔥 lo subimos */
+        left: 20px;
+        width: 40%;
+        max-height: 60vh; /* 🔥 límite de altura */
+        overflow-y: auto; /* 🔥 scroll si crece */
+        font-size: 14px;
+        z-index: 2;
+      }
+
+      #progressContainer {
+        position: fixed; /* 🔥 independiente del resto */
+        bottom: 20px;
+        left: 20px;
+        width: 90vw;
+        height: 10px;
+        border: 1px solid #00ff00;
+        z-index: 2;
+      }
+
+      #progressBar {
+        height: 100%;
+        width: 0%;
+        background: #00ff00;
+        box-shadow: 0 0 10px #00ff00;
+      }
+
+      /* HACKED SCREEN */
+      #hackedScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 50px;
+        z-index: 999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1s;
+        text-shadow: 0 0 20px red;
+      }
+
+      #webcamOverlay {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        color: red;
+        font-size: 20px;
+        font-weight: bold;
+        z-index: 999;
+        opacity: 0;
+        text-shadow: 0 0 10px red;
+      }
+
+      #hackContent {
+        text-align: center;
+      }
+
+      @keyframes shake {
+        0% {
+          transform: translate(0, 0);
+        }
+        10% {
+          transform: translate(-5px, 5px);
+        }
+        20% {
+          transform: translate(5px, -5px);
+        }
+        30% {
+          transform: translate(-5px, -5px);
+        }
+        40% {
+          transform: translate(5px, 5px);
+        }
+        50% {
+          transform: translate(-5px, 5px);
+        }
+        60% {
+          transform: translate(5px, -5px);
+        }
+        70% {
+          transform: translate(-5px, -5px);
+        }
+        80% {
+          transform: translate(5px, 5px);
+        }
+        90% {
+          transform: translate(-5px, 5px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+
+      .shake {
+        animation: shake 0.4s infinite;
+      }
+
+      .anon-face {
+        position: fixed;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.9;
+      }
+
+      .anon-face pre {
+        margin: 0;
+        color: #00ff00;
+
+        font-family: Consolas, "Courier New", monospace;
+
+        font-size: 9px;
+
+        line-height: 1; /* 🔥 CLAVE: no achatar */
+        letter-spacing: 0px; /* 🔥 evitar compresión horizontal */
+
+        white-space: pre;
+
+        text-shadow:
+          0 0 4px rgba(0, 255, 0, 0.8),
+          0 0 12px rgba(0, 255, 0, 0.3);
+
+        transform: scaleX(1.05); /* 🔥 corrige proporción visual */
+      }
+
+      #scaryData {
+        margin-top: 25px;
+        font-size: 20px;
+        color: #00ff00;
+        text-shadow: 0 0 10px #00ff00;
+        opacity: 0;
+        transition: opacity 1s;
+      }
+
+      .cursor::after {
+        content: "_";
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50%,
+        100% {
+          opacity: 1;
+        }
+        25%,
+        75% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="matrix"></canvas>
+    <h1>ACCESS DENIED</h1>
+
+    <button id="btn">STOP HACK</button>
+
+    <div id="terminal"></div>
+
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
+
+    <div id="hackedScreen">
+      <div id="hackContent">
+        <div>YOU HAVE BEEN HACKED!</div>
+        <div class="anon-face">
+          <pre>
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⣀⣀⣤⣤⣴⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣦⣤⣤⣄⣀⡀⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⣴⣿⣿⡿⣿⢿⣟⣿⣻⣟⡿⣟⣿⣟⡿⣟⣿⣻⣟⣿⣻⢿⣻⡿⣿⢿⣷⣆⠄⠄⠄
+⠄⠄⠄⢘⣿⢯⣷⡿⡿⡿⢿⢿⣷⣯⡿⣽⣞⣷⣻⢯⣷⣻⣾⡿⡿⢿⢿⢿⢯⣟⣞⡮⡀⠄⠄
+⠄⠄⠄⢸⢞⠟⠃⣉⢉⠉⠉⠓⠫⢿⣿⣷⢷⣻⣞⣿⣾⡟⠽⠚⠊⠉⠉⠉⠙⠻⣞⢵⠂⠄⠄
+⠄⠄⠄⢜⢯⣺⢿⣻⣿⣿⣷⣔⡄⠄⠈⠛⣿⣿⡾⠋⠁⠄⠄⣄⣶⣾⣿⡿⣿⡳⡌⡗⡅⠄⠄
+⠄⠄⠄⢽⢱⢳⢹⡪⡞⠮⠯⢯⡻⡬⡐⢨⢿⣿⣿⢀⠐⡥⣻⡻⠯⡳⢳⢹⢜⢜⢜⢎⠆⠄⠄
+⠄⠄⠠⣻⢌⠘⠌⡂⠈⠁⠉⠁⠘⠑⢧⣕⣿⣿⣿⢤⡪⠚⠂⠈⠁⠁⠁⠂⡑⠡⡈⢮⠅⠄⠄
+⠄⠄⠠⣳⣿⣿⣽⣭⣶⣶⣶⣶⣶⣺⣟⣾⣻⣿⣯⢯⢿⣳⣶⣶⣶⣖⣶⣮⣭⣷⣽⣗⠍⠄⠄
+⠄⠄⢀⢻⡿⡿⣟⣿⣻⣽⣟⣿⢯⣟⣞⡷⣿⣿⣯⢿⢽⢯⣿⣻⣟⣿⣻⣟⣿⣻⢿⣿⢀⠄⠄
+⠄⠄⠄⡑⡏⠯⡯⡳⡯⣗⢯⢟⡽⣗⣯⣟⣿⣿⣾⣫⢿⣽⠾⡽⣺⢳⡫⡞⡗⡝⢕⠕⠄⠄⠄
+⠄⠄⠄⢂⡎⠅⡃⢇⠇⠇⣃⣧⡺⡻⡳⡫⣿⡿⣟⠞⠽⠯⢧⣅⣃⠣⠱⡑⡑⠨⢐⢌⠂⠄⠄
+⠄⠄⠄⠐⠼⣦⢀⠄⣶⣿⢿⣿⣧⣄⡌⠂⠢⠩⠂⠑⣁⣅⣾⢿⣟⣷⠦⠄⠄⡤⡇⡪⠄⠄⠄
+⠄⠄⠄⠄⠨⢻⣧⡅⡈⠛⠿⠿⠿⠛⠁⠄⢀⡀⠄⠄⠘⠻⠿⠿⠯⠓⠁⢠⣱⡿⢑⠄⠄⠄⠄
+⠄⠄⠄⠄⠈⢌⢿⣷⡐⠤⣀⣀⣂⣀⢀⢀⡓⠝⡂⡀⢀⢀⢀⣀⣀⠤⢊⣼⡟⡡⡁⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠈⢢⠚⣿⣄⠈⠉⠛⠛⠟⠿⠿⠟⠿⠻⠻⠛⠛⠉⠄⣠⠾⢑⠰⠈⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠑⢌⠿⣦⡡⣱⣸⣸⣆⠄⠄⠄⣰⣕⢔⢔⠡⣼⠞⡡⠁⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠑⢝⢷⣕⡷⣿⡿⠄⠄⠠⣿⣯⣯⡳⡽⡋⠌⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠙⢮⣿⣽⣯⠄⠄⢨⣿⣿⡷⡫⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠘⠙⠝⠂⠄⢘⠋⠃⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄</pre
+          >
+        </div>
+
+        <div id="scaryData"></div>
+      </div>
+    </div>
+    <div id="webcamOverlay">● REC</div>
+
+    <script>
+      const btn = document.getElementById("btn");
+      const terminal = document.getElementById("terminal");
+      const progressBar = document.getElementById("progressBar");
+      const hackedScreen = document.getElementById("hackedScreen");
+
+      let clicked = false;
+
+      // BOTON ESCAPA
+      function randomPosition(el) {
+        const x = Math.random() * (window.innerWidth - el.offsetWidth);
+        const y = Math.random() * (window.innerHeight - el.offsetHeight);
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+      }
+
+      randomPosition(btn);
+
+      const margin = 120; // zona de escape
+      let targetX = btn.offsetLeft;
+      let targetY = btn.offsetTop;
+
+      function moveButton() {
+        btn.style.left = targetX + "px";
+        btn.style.top = targetY + "px";
+      }
+
+      document.addEventListener("mousemove", (e) => {
+        const rect = btn.getBoundingClientRect();
+
+        const btnX = rect.left + rect.width / 2;
+        const btnY = rect.top + rect.height / 2;
+
+        const dx = e.clientX - btnX;
+        const dy = e.clientY - btnY;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // 🔥 zona de peligro
+        if (distance < margin) {
+          const angle = Math.atan2(dy, dx);
+
+          // 🔥 velocidad dinámica (más cerca = más rápido)
+          const speed = 500 + (margin - distance) * 3;
+
+          let newX = btn.offsetLeft - Math.cos(angle) * speed;
+          let newY = btn.offsetTop - Math.sin(angle) * speed;
+
+          // 🔥 evitar bordes (clave)
+          const padding = 40;
+
+          newX = Math.max(
+            padding,
+            Math.min(window.innerWidth - rect.width - padding, newX),
+          );
+          newY = Math.max(
+            padding,
+            Math.min(window.innerHeight - rect.height - padding, newY),
+          );
+
+          targetX = newX;
+          targetY = newY;
+          moveButton();
+        }
+      });
+
+      btn.addEventListener("click", () => {
+        clicked = true;
+        btn.innerText = "😱 TOO LATE";
+      });
+
+      btn.addEventListener("mouseenter", () => {
+        randomPosition(btn);
+      });
+
+      // TERMINAL
+      const messages = [
+        "> initializing hack...",
+        "> scanning ports...",
+        "> injecting payload...",
+        "> ERROR: connection lost...",
+        "> retrying...",
+        "> retry successful",
+        "> bypassing firewall...",
+        "> escalating privileges...",
+        "> root access granted",
+        "> dumping credentials...",
+        "> extracting data...",
+        "> uploading payload...",
+        "> ERROR: timeout...",
+        "> retrying...",
+        "> success",
+        "> establishing persistence...",
+        "> cleaning logs...",
+        "> finalizing...",
+        "> ACCESS GRANTED",
+      ];
+
+      let i = 0;
+
+      function typeText() {
+        if (i < messages.length) {
+          terminal.innerHTML += messages[i] + "<br>";
+          terminal.scrollTop = terminal.scrollHeight;
+          i++;
+          setTimeout(typeText, Math.random() * 2000 + 800);
+        }
+      }
+
+      typeText();
+
+      // PROGRESS (60 segundos)
+      let progress = 0;
+      const duration = 30000 ;
+      const interval = 100;
+
+      const progressInterval = setInterval(() => {
+        progress += (interval / duration) * 100;
+        progressBar.style.width = progress + "%";
+
+        if (progress >= 100) {
+          clearInterval(progressInterval);
+
+          if (!clicked) {
+            hackedScreen.style.opacity = 1;
+
+            document.getElementById("webcamOverlay").style.opacity = 1;
+
+            // 🔥 empieza vibración
+            document.body.classList.add("shake");
+
+            // 🔥 detener vibración después de 3 segundos
+            setTimeout(() => {
+              document.body.classList.remove("shake");
+            }, 3000);
+
+            setTimeout(() => {
+              playFinalStatic();
+              showScaryData();
+            }, 100);
+          }
+        }
+      }, interval);
+
+      // MATRIX
+      const canvas = document.getElementById("matrix");
+      const ctx = canvas.getContext("2d");
+
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+
+      const letters = "01";
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = Array(Math.floor(columns)).fill(1);
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(0,255,0,0.3)";
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = letters[Math.floor(Math.random() * letters.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+
+          drops[i]++;
+        }
+      }
+
+      setInterval(draw, 33);
+
+      function showScaryData() {
+        const el = document.getElementById("scaryData");
+        el.style.opacity = 1;
+
+        const time = new Date().toLocaleTimeString();
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const language = navigator.language == "en-US" ? "ingles" : "español";
+        const device = /Mobi|Android/i.test(navigator.userAgent)
+          ? "un telefono"
+          : "una computadora";
+
+        const lines = [
+          "> accediendo a tu sesión...",
+          `> ${time}`,
+          `> te encuentras en ${timezone}`,
+          `> hablas en ${language}`,
+          `> Y tu dispositivo es ${device}`,
+        ];
+
+        let lineIndex = 0;
+
+        function typeLine() {
+          if (lineIndex >= lines.length) return;
+
+          const line = lines[lineIndex];
+          let charIndex = 0;
+
+          const currentLine = document.createElement("div");
+          el.appendChild(currentLine);
+
+          function typeChar() {
+            if (charIndex < line.length) {
+              currentLine.innerHTML += line.charAt(charIndex);
+              charIndex++;
+
+              // velocidad variable (clave para realismo)
+              setTimeout(typeChar, Math.random() * 40 + 20);
+            } else {
+              lineIndex++;
+
+              // pausa entre líneas (tensión)
+              setTimeout(typeLine, 400);
+            }
+          }
+
+          typeChar();
+        }
+
+        typeLine();
+      }
+
+      btn.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        randomPosition(btn);
+      });
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+      function playFinalStatic() {
+        if (audioCtx.state === "suspended") return;
+
+        const duration = 3;
+        const bufferSize = audioCtx.sampleRate * duration;
+        const buffer = audioCtx.createBuffer(
+          1,
+          bufferSize,
+          audioCtx.sampleRate,
+        );
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.value = 800 + Math.random() * 1000;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.01,
+          audioCtx.currentTime + duration,
+        );
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        noise.start();
+      }
+
+      function unlockAudio() {
+        if (audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+      }
+
+      document.addEventListener("click", unlockAudio, { once: true });
+      document.addEventListener("keydown", unlockAudio, { once: true });
+      document.addEventListener("touchstart", unlockAudio, { once: true });
+    </script>
+  </body>
+</html>
